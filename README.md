@@ -2,7 +2,7 @@
 
 ## About
 
-ASAC-Detector a Language Detection System for ASAC Chat
+ASAC-Detector a Language Detection bot for ASAC Chat
 
 
 ## Developers
