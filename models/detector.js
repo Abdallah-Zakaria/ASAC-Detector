@@ -2,29 +2,42 @@
 
 const Discord = require("discord.js");
 
+require("dotenv").config();
+const logs = process.env.LOGS;
+
 module.exports = (client) => {
   client.on("message", async (message) => {
-    console.log(message)
-    const { content } = message;
-    const arabic = /[\u0600-\u06FF]/;
-    if (arabic.test(content)) {
-      const channelName = message.channel.name;
-      const userName = message.author.username;
-      message.channel.send(
-        "🚨🛑 YOU ARE ONLY ALLOWED TO SPEAK IN ENGLISH HERE! 🛑🚨"
-      );
-      const channel = await client.channels.fetch("858123323653357598");
-      const embed = new Discord.MessageEmbed()
-        .setDescription(
-        `
-        We found ${userName} that assign in ${channelName} writing in Arabic.
-        ${content}
-        `
-        )
-        .setTitle("Writing Arabic")
-        .setFooter("Warning")
-        .setColor("#b006c6");
-      channel.send(embed);
+    if (message.channel.id !== logs) {
+      const { content } = message;
+      const arabic = /[\u0600-\u06FF]/;
+      if (arabic.test(content)) {
+        const channelName = message.channel.name;
+        const userName = message.author.username;
+        const avatar = message.author.avatarURL();
+        const id = message.author.id;
+
+        const embed = new Discord.MessageEmbed()
+          .setTitle(`ASAC Detector`)
+          .setAuthor(userName, avatar)
+          .setFooter(`by Abdallah Zakaria`)
+          .setColor("#f44336")
+          .setDescription(
+            `🚨🛑 You are only allowed to speak in English! 🛑🚨`
+          );
+        message.reply(embed);
+        message.delete();
+
+        const channel = await client.channels.fetch(logs);
+        const embedLog = new Discord.MessageEmbed()
+          .addFields(
+            { inline: true, name: "User", value: `<@${id}>` },
+            { inline: true, name: "Channel", value: channelName },
+            { inline: true, name: "Message", value: content }
+          )
+          .setAuthor(userName, avatar)
+          .setColor("#008CBA");
+        channel.send(embedLog);
+      }
     }
   });
 };
